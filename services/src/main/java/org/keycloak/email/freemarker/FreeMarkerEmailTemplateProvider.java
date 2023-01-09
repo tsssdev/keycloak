@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jboss.logging.Logger;
 import org.keycloak.broker.provider.BrokeredIdentityContext;
 import org.keycloak.common.util.ObjectUtil;
 import org.keycloak.email.EmailException;
@@ -53,6 +54,8 @@ import org.keycloak.utils.StringUtil;
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
  */
 public class FreeMarkerEmailTemplateProvider implements EmailTemplateProvider {
+    private static final Logger logger = Logger.getLogger(EmailTemplateProvider.class);
+
 
     protected KeycloakSession session;
     /**
@@ -209,8 +212,11 @@ public class FreeMarkerEmailTemplateProvider implements EmailTemplateProvider {
 
     protected EmailTemplate processTemplate(String subjectKey, List<Object> subjectAttributes, String template, Map<String, Object> attributes) throws EmailException {
         try {
+            logger.info("processTemplate:" + template);
             Theme theme = getTheme();
             Locale locale = session.getContext().resolveLocale(user);
+            //Locale locale = new Locale("ar");
+            logger.info("##############arLocale:" + locale);
             attributes.put("locale", locale);
             KeycloakUriInfo uriInfo = session.getContext().getUri();
             Properties rb = new Properties();

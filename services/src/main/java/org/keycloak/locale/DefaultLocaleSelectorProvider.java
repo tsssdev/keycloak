@@ -42,21 +42,22 @@ public class DefaultLocaleSelectorProvider implements LocaleSelectorProvider {
     public Locale resolveLocale(RealmModel realm, UserModel user) {
         HttpHeaders requestHeaders = session.getContext().getRequestHeaders();
         AuthenticationSessionModel session = this.session.getContext().getAuthenticationSession();
-
         if (!realm.isInternationalizationEnabled()) {
             return Locale.ENGLISH;
         }
 
         Locale userLocale = getUserLocale(realm, session, user, requestHeaders);
+        logger.info("userlocale:" + userLocale);
         if (userLocale != null) {
             return userLocale;
         }
 
         String realmDefaultLocale = realm.getDefaultLocale();
+        logger.info("realmDefaultLocale:" + realmDefaultLocale);
         if (realmDefaultLocale != null) {
             return Locale.forLanguageTag(realmDefaultLocale);
         }
-
+        logger.info("None matching in resolveLocale, so returnimg English");
         return Locale.ENGLISH;
     }
 
@@ -64,26 +65,31 @@ public class DefaultLocaleSelectorProvider implements LocaleSelectorProvider {
         Locale locale;
 
         locale = getUserSelectedLocale(realm, session);
+        logger.info("getUserSelectedLocale:" + locale);
         if (locale != null) {
             return locale;
         }
 
         locale = getUserProfileSelection(realm, user);
+        logger.info("getUserProfileSelection:" + locale);
         if (locale != null) {
             return locale;
         }
 
         locale = getClientSelectedLocale(realm, session);
+        logger.info("getClientSelectedLocale:" + locale);
         if (locale != null) {
             return locale;
         }
 
         locale = getLocaleCookieSelection(realm, requestHeaders);
+        logger.info("getLocaleCookieSelection:" + locale);
         if (locale != null) {
             return locale;
         }
 
         locale = getAcceptLanguageHeaderLocale(realm, requestHeaders);
+        logger.info("getAcceptLanguageHeaderLocale:" + locale);
         if (locale != null) {
             return locale;
         }
@@ -166,6 +172,7 @@ public class DefaultLocaleSelectorProvider implements LocaleSelectorProvider {
     private Locale findLocale(RealmModel realm, String... localeStrings) {
         List<Locale> supportedLocales = realm.getSupportedLocalesStream()
                 .map(Locale::forLanguageTag).collect(Collectors.toList());
+        logger.info("supportedLocales:" + supportedLocales);
         for (String localeString : localeStrings) {
             if (localeString != null) {
                 Locale result = null;
@@ -180,6 +187,7 @@ public class DefaultLocaleSelectorProvider implements LocaleSelectorProvider {
                         }
                     }
                 }
+                logger.info("findLocale:result:" + result);
                 if (result != null) {
                     return result;
                 }

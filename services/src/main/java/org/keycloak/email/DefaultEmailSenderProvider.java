@@ -64,6 +64,7 @@ public class DefaultEmailSenderProvider implements EmailSenderProvider {
     @Override
     public void send(Map<String, String> config, String address, String subject, String textBody, String htmlBody) throws EmailException {
         Transport transport = null;
+        logger.info("Send email, subject:" + subject + ", address:" + address + ", textBody:" + textBody + ", htmlBody:" + htmlBody);
         try {
 
             Properties props = new Properties();
